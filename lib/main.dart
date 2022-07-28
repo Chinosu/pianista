@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:midi_player/midi_player.dart';
 import 'package:dart_midi/dart_midi.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:just_audio/just_audio.dart';
 
 // flutter run --no-sound-null-safety
 
@@ -20,6 +21,7 @@ class Pianista extends StatefulWidget {
 class _PianistaState extends State<Pianista> {
   // Variables
   final MidiPlayer _midiPlayer = MidiPlayer();
+  final tempoPlayer = AudioPlayer();
   int _noteCounter = 0;
   List<List<NoteOnEvent>> _noteOnEvents = [];
   bool _secondButtonState = false;
@@ -83,11 +85,39 @@ class _PianistaState extends State<Pianista> {
         mode: LaunchMode.externalApplication,
       );
 
+  /// Start the metronome according to the one of the five [tempo]
+  void startMetronome(String tempo) {
+    stopMetronome();
+    switch (tempo) {
+      case 'Adagio':
+        tempoPlayer.setAsset('assets/tempo/Adagio.mp3');
+        break;
+      case 'Andante':
+        tempoPlayer.setAsset('assets/tempo/Andante.mp3');
+        break;
+      case 'Moderato':
+        tempoPlayer.setAsset('assets/tempo/Moderato.mp3');
+        break;
+      case 'Vivace':
+        tempoPlayer.setAsset('assets/tempo/Vivace.mp3');
+        break;
+      case 'Presto':
+        tempoPlayer.setAsset('assets/tempo/Presto.mp3');
+        break;
+    }
+    tempoPlayer.play();
+  }
+  /// Stop the metronome
+  void stopMetronome() => tempoPlayer.stop();
+
+
+
   // Functions (Overridden)
 
   @override
   void initState() {
     _midiPlayer.load('assets/midi/Steinway.sf2');
+    tempoPlayer.setLoopMode(LoopMode.one);
     super.initState();
   }
 
@@ -108,8 +138,8 @@ class _PianistaState extends State<Pianista> {
                     _noteOnEvents = result;
                     _noteCounter = 0;
                     setState(() => _secondButtonState = true);
-                    launchMuseScore();
                   }
+                  startMetronome('Vivace');
                 },
                 child: const Text("Load"),
               ),
