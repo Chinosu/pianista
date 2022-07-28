@@ -4,6 +4,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:midi_player/midi_player.dart';
 import 'package:dart_midi/dart_midi.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 // flutter run --no-sound-null-safety
 
@@ -25,14 +26,13 @@ class _PianistaState extends State<Pianista> {
 
   // Functions
 
-  /// Play [note] (0 to 87) on the piano at [velocity] (0 to 1.0, the maximum is used if omitted).
+  /// Play [note] on the piano at [velocity] (0 to 1.0, the maximum is used if omitted).
   void playNote({required int note, double velocity = 1.0}) {
-    // MidiPlayer can play n if 21<=n<=108
-    _midiPlayer.playNote(note: note + 0, velocity: velocity);
+    _midiPlayer.playNote(note: note - 0, velocity: velocity);
   }
 
   /// Open file dialog using [FilePicker] to select ONE midi file
-  /// and return a sorted list of all [NoteOnEvent] from it
+  /// and return a sorted list of all [NoteOnEvent] from it.
   Future<List<List<NoteOnEvent>>?> getMidiFile() async {
     // Open file browser dialog
     FilePickerResult? result = await FilePicker.platform.pickFiles(
@@ -77,6 +77,12 @@ class _PianistaState extends State<Pianista> {
     return null;
   }
 
+  /// Open [www.musescore.com] in external web browser.
+  Future<bool> launchMuseScore() async => await launchUrl(
+        Uri.parse('https://musescore.com'),
+        mode: LaunchMode.externalApplication,
+      );
+
   // Functions (Overridden)
 
   @override
@@ -90,7 +96,7 @@ class _PianistaState extends State<Pianista> {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
-          title: Text("hi"),
+          title: Text("Test"),
         ),
         body: Center(
           child: Column(
@@ -102,23 +108,28 @@ class _PianistaState extends State<Pianista> {
                     _noteOnEvents = result;
                     _noteCounter = 0;
                     setState(() => _secondButtonState = true);
+                    launchMuseScore();
                   }
                 },
                 child: const Text("Load"),
               ),
-              ElevatedButton(
-                onPressed: _secondButtonState
-                    ? () {
-                        for (final noteOnEvent
-                            in _noteOnEvents[_noteCounter++]) {
-                          playNote(note: noteOnEvent.noteNumber);
-                          if (_noteCounter >= _noteOnEvents.length) {
-                            setState(() => _secondButtonState = false);
+              SizedBox(
+                width: 500,
+                height: 500,
+                child: ElevatedButton(
+                  onPressed: _secondButtonState
+                      ? () {
+                          for (final noteOnEvent
+                              in _noteOnEvents[_noteCounter++]) {
+                            playNote(note: noteOnEvent.noteNumber);
+                            if (_noteCounter >= _noteOnEvents.length) {
+                              setState(() => _secondButtonState = false);
+                            }
                           }
                         }
-                      }
-                    : null,
-                child: const Text('Play'),
+                      : null,
+                  child: const Text('Play'),
+                ),
               ),
             ],
           ),
