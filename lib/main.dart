@@ -2,12 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:introduction_screen/introduction_screen.dart';
 import 'package:pianista/pianista.dart';
 
-// TERMINAL COMMAND TO RUN/BUILD (Because this application uses an old/legacy plugin, we must run without sound null safety).
-// zX#B
-
 void main() {
   runApp(
     MaterialApp(
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primarySwatch: Colors.teal,
         backgroundColor: Colors.black26,
@@ -35,7 +33,7 @@ class _IntroductionPageState extends State<IntroductionPage> {
       pages: [
         PageViewModel(
           title: '\n\n\n\n\n\n\n\nPianista',
-          body: '\n\n\n\n\nTap load to select a midi file.\nTap the screen to play.\nTap high to play louder and tap lower to play softer.\n\nTap metronome to enable, disable, or configure.\n\nTap Get more midi files to download midi from www.musescore.com.',
+          body: '\n\n\n\n\nTap load to select a midi file.\n\nTap the screen to play.\n\nTap high to play louder and tap lower to play softer.\n\nTap metronome to enable, disable, or configure.\n\nTap Get more midi files to download midi from www.musescore.com.',
         ),
       ],
       onDone: () {

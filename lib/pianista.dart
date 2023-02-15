@@ -85,10 +85,10 @@ class _PianistaState extends State<Pianista> {
     return null;
   }
 
-  /// Open [www.musescore.com] in external web browser.
-  Future<bool> _launchMuseScore() async {
+  /// Open [link] in external web browser.
+  Future<bool> _launchWebsite(String link) async {
     return await launchUrl(
-      Uri.parse('https://musescore.com'),
+      Uri.parse(link),
       mode: LaunchMode.externalApplication,
     );
   }
@@ -198,6 +198,7 @@ class _PianistaState extends State<Pianista> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primarySwatch: Colors.teal,
         backgroundColor: Colors.black26,
@@ -208,7 +209,12 @@ class _PianistaState extends State<Pianista> {
       ),
       home: Scaffold(
         appBar: AppBar(
-          title: Text("Pianista"),
+          title:
+              Container(
+                alignment: Alignment.centerLeft,
+                child: const Text("Pianista"),
+
+          ),
         ),
         body: Column(
           children: [
@@ -278,14 +284,21 @@ class _PianistaState extends State<Pianista> {
                         ),
                       );
                     },
-                    child: const Text('Metrnome'),
+                    child: const Text('Metronome'),
                   ),
                 ),
                 Container(
                   margin: const EdgeInsets.all(5),
                   child: ElevatedButton(
-                    onPressed: () => _launchMuseScore(),
+                    onPressed: () => _launchWebsite('https://musescore.com'),
                     child: Text('Get more midi files'),
+                  ),
+                ),
+                Container(
+                  alignment: Alignment.centerRight,
+                  child: TextButton(
+                    child: const Icon(Icons.help_center_outlined, size: 40,),
+                    onPressed: () => _launchWebsite('https://sites.google.com/view/pianistaapp/user-manual?authuser=0'),
                   ),
                 ),
               ],
